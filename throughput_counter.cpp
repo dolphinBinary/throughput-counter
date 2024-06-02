@@ -20,12 +20,13 @@ std::vector<Stats> readStats(const std::string& filename) {
 
     while (std::getline(file, line)) {
         std::istringstream iss(line);
-        Stats stat;
+        Stats stat{};
         if (iss >> stat.start >> stat.end >> stat.cellId >> stat.imsi >> stat.rnti >> stat.lcid
                 >> stat.nTxPDUs >> stat.txBytes >> stat.nRxPDUs >> stat.rxBytes >> stat.delay
                 >> stat.stdDevDelay >> stat.minDelay >> stat.maxDelay >> stat.pduSize
                 >> stat.stdDevPduSize >> stat.minPduSize >> stat.maxPduSize) {
-            stats.push_back(stat);
+            stats.push_back(stat); // TODO: можно улучшить, при копировании можно не амортизировать стоимость, есть проблема, способ решения возомжно надо работать по ссылке, из за неизвестного объёма входных данных, при параллельной работе с файлами проблем возникнуть не должно, если будет очень много строк в файле то скорее всего будут проблемы при копировании
+            // TODO: Возможно можно выкинуть чтение не нужной статистики и не записывать не нужные поля
         } else {
             std::cerr << "Ошибка чтения строки: " << line << std::endl;
         }
@@ -43,9 +44,6 @@ double calculateThroughput(const std::vector<Stats>& stats) {
         totalTime += (stat.end - stat.start);
     }
 
-    std::cout << "Общее количество байтов: " << totalBytes << std::endl;
-    std::cout << "Общее время: " << totalTime << std::endl;
-
     if (totalTime == 0) {
         return 0; // Избегаем деления на ноль
     }
@@ -56,16 +54,18 @@ double calculateThroughput(const std::vector<Stats>& stats) {
 }
 
 int main() {
+    std::cout << std::fixed << std::setprecision(2);
+
     std::vector<Stats> dlStats = readStats("../output/DlRlcStats.txt");
     std::vector<Stats> ulStats = readStats("../output/UlRlcStats.txt");
 
     double dlThroughput = calculateThroughput(dlStats);
     double ulThroughput = calculateThroughput(ulStats);
 
-    std::cout << std::fixed << std::setprecision(2);
-
-    std::cout << "Downlink Throughput: " << dlThroughput / 1000 << " Kbps" << std::endl;
-    std::cout << "Uplink Throughput: " << ulThroughput / 1000 << " Kbps" << std::endl;
+    std::cout << "Передающая пропускная способность: " << dlThroughput / 1000 << " Кб/с" << std::endl;
+    std::cout << "Принимающая пропускная способность: " << ulThroughput / 1000 << " Кб/с" << std::endl;
 
     return 0;
 }
+
+// TODO: подумать над параллелизмом кода, так как тут два абсолютно независимых потока, в зависимости от возможностей станции
