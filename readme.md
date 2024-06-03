@@ -24,7 +24,14 @@ g++, ns-3, waf, cmake
 
 > make
 
-> ./throughput_counter
+> ./throughput_counter filename1 filename2
+
+#### Пример
+> ./throughput_counter DlRlcStats.txt UlRlcStats.txt
+
+Вывод в консоль:
+Передающая пропускная способность: 1684.53 Кб/с
+Принимающая пропускная способность: 1683.71 Кб/с
  
 # Методы
 ## calculateThroughput
@@ -54,7 +61,14 @@ from directory /throughput-counter/*your-ns-allinone*/ns-3.x
 
 > make
 
-> ./throughput_counter
+> ./throughput_counter filename1 filename2
+
+#### Example
+> ./throughput_counter DlRlcStats.txt UlRlcStats.txt
+
+Output:
+Передающая пропускная способность: 1684.53 Кб/с
+Принимающая пропускная способность: 1683.71 Кб/с
  
 # Methods
 ## calculateThroughput
