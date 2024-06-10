@@ -9,9 +9,6 @@
 using namespace ns3;
 
 int main(int argc, char *argv[]) {
-    CommandLine cmd;
-    cmd.Parse(argc, argv);
-
     Ptr <LteHelper> lteHelper = CreateObject<LteHelper>();
     lteHelper->SetSchedulerType("ns3::PfFfMacScheduler");
 
